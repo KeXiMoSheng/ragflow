@@ -1,4 +1,3 @@
-import { IconFontFill } from '@/components/icon-font';
 import { RAGFlowAvatar } from '@/components/ragflow-avatar';
 import { Button } from '@/components/ui/button';
 import {
@@ -15,7 +14,7 @@ import {
 import { cn } from '@/lib/utils';
 import { TenantRole } from '@/pages/user-setting/constants';
 import { Routes } from '@/routes';
-import { LucideChevronDown, LucideCircleHelp } from 'lucide-react';
+import { LucideChevronDown } from 'lucide-react';
 import React, { useMemo } from 'react';
 import { Link, useLocation } from 'react-router';
 import { BellButton } from './bell-button';
@@ -63,7 +62,7 @@ export function Header({
           to={Routes.Root}
           aria-current={pathname === Routes.Root ? 'page' : undefined}
         >
-          <img src={'/logo.svg'} alt="RAGFlow logo" className="size-10" />
+          <img src={'/kingdee.ico'} alt="kingdee logo" className="size-10" />
         </Link>
       </div>
 
@@ -73,23 +72,23 @@ export function Header({
         className="flex items-center justify-end gap-4 text-text-badge"
         data-testid="auth-status"
       >
-        <a
+        {/* <a
           className="p-2 text-text-secondary hover:text-text-primary focus-visible:text-text-primary"
           target="_blank"
           href="https://discord.com/invite/NjYzJD3GM3"
           rel="noreferrer noopener"
         >
           <IconFontFill name="a-DiscordIconSVGVectorIcon" />
-        </a>
+        </a> */}
 
-        <a
+        {/* <a
           className="p-2 text-text-secondary hover:text-text-primary focus-visible:text-text-primary"
           target="_blank"
           href="https://github.com/infiniflow/ragflow"
           rel="noreferrer noopener"
         >
           <IconFontFill name="GitHub" />
-        </a>
+        </a> */}
 
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
@@ -111,7 +110,7 @@ export function Header({
           </DropdownMenuContent>
         </DropdownMenu>
 
-        <Button
+        {/* <Button
           asLink
           variant="ghost"
           size="icon"
@@ -120,7 +119,7 @@ export function Header({
           rel="noreferrer noopener"
         >
           <LucideCircleHelp className="size-[1em]" />
-        </Button>
+        </Button> */}
 
         <ThemeButton />
 

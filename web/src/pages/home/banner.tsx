@@ -50,7 +50,7 @@ export function NextBanner() {
         {t('header.welcome')}{' '}
       </span>
       <span className="font-bold text-transparent bg-clip-text bg-gradient-to-l from-[#40EBE3] to-[#4A51FF]">
-        RAGFlow
+        运维知识库
       </span>
     </h1>
   );
