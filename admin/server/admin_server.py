@@ -70,7 +70,7 @@ if __name__ == '__main__':
         logging.info(f"RAGFlow admin is ready after {time.time() - start_ts}s initialization.")
         run_simple(
             hostname="0.0.0.0",
-            port=9381,
+            port=29381,
             application=app,
             threaded=True,
             use_reloader=False,
