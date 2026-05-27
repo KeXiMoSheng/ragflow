@@ -114,6 +114,29 @@ run_server(){
     fi
 }
 
+# Function to execute admin_server with retry logic
+run_admin_server(){
+    local retry_count=0
+    while ! $STOP && [ $retry_count -lt $MAX_RETRIES ]; do
+        echo "Starting admin_server.py (Attempt $((retry_count+1)))"
+        $PY admin/server/admin_server.py
+        EXIT_CODE=$?
+        if [ $EXIT_CODE -eq 0 ]; then
+            echo "admin_server.py exited successfully."
+            break
+        else
+            echo "admin_server.py failed with exit code $EXIT_CODE. Retrying..." >&2
+            retry_count=$((retry_count + 1))
+            sleep 2
+        fi
+    done
+
+    if [ $retry_count -ge $MAX_RETRIES ]; then
+        echo "admin_server.py failed after $MAX_RETRIES attempts. Exiting..." >&2
+        cleanup
+    fi
+}
+
 # Start task executors
 for ((i=0;i<WS;i++))
 do
@@ -123,6 +146,10 @@ done
 
 # Start the main server
 run_server &
+PIDS+=($!)
+
+# Start the admin server
+run_admin_server &
 PIDS+=($!)
 
 # Wait for all background processes to finish
