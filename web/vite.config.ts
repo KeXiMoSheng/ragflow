@@ -59,17 +59,17 @@ export default defineConfig(({ mode }) => {
   const proxySchemes = {
     python: {
       '/api/v1/admin': {
-        target: 'http://127.0.0.1:9381/',
+        target: 'http://127.0.0.1:29381/',
         changeOrigin: true,
         ws: true,
       },
       '/api': {
-        target: 'http://127.0.0.1:9380/',
+        target: 'http://127.0.0.1:29380/',
         changeOrigin: true,
         ws: true,
       },
       '/v1': {
-        target: 'http://127.0.0.1:9380/',
+        target: 'http://127.0.0.1:29380/',
         changeOrigin: true,
         ws: true,
       },
@@ -77,56 +77,56 @@ export default defineConfig(({ mode }) => {
     hybrid: {
       '^(/v1/kb)|^(/v1/document)|^(/v1/llm/list)|^(/api/v1/datasets)|^(/api/v1/memories)|^(/v1/user)|^(/v1/user/tenant_info)|^(/v1/tenant/list)|^(/v1/system/config)|^(/v1/user/login)|^(/v1/user/logout)|^(/api/v1/files)':
         {
-          target: 'http://127.0.0.1:9384/',
+          target: 'http://127.0.0.1:29384/',
           changeOrigin: true,
           ws: true,
         },
       '^(/api/v1/admin/sandbox)|^(/api/v1/admin/roles)|^(/api/v1/admin/roles/owner/permission)|^(/api/v1/admin/roles_with_permission)|^(/api/v1/admin/whitelist)|^(/api/v1/admin/variables)':
         {
-          target: 'http://127.0.0.1:9381/',
+          target: 'http://127.0.0.1:29381/',
           changeOrigin: true,
           ws: true,
         },
       '/api/v1/admin': {
-        target: 'http://127.0.0.1:9383/',
+        target: 'http://127.0.0.1:29383/',
         changeOrigin: true,
         ws: true,
       },
       '/api/v1/users/me/models': {
-        target: 'http://127.0.0.1:9380/',
+        target: 'http://127.0.0.1:29380/',
         changeOrigin: true,
         ws: true,
       },
       '^(/api/v1/users)|^(/api/v1/auth)|^(/api/v1/users/me)|^(/api/v1/system/config)|^(/api/v1/system/version)|^(/api/v1/tenants)|^(/api/v1/chats)|^(/api/v1/searches)|^(/api/v1/files)':
         {
-          target: 'http://127.0.0.1:9384/',
+          target: 'http://127.0.0.1:29384/',
           changeOrigin: true,
           ws: true,
         },
       '/api': {
-        target: 'http://127.0.0.1:9380/',
+        target: 'http://127.0.0.1:29380/',
         changeOrigin: true,
         ws: true,
       },
       '/v1': {
-        target: 'http://127.0.0.1:9380/',
+        target: 'http://127.0.0.1:29380/',
         changeOrigin: true,
         ws: true,
       },
     },
     go: {
       '/api/v1/admin': {
-        target: 'http://127.0.0.1:9383/',
+        target: 'http://127.0.0.1:29383/',
         changeOrigin: true,
         ws: true,
       },
       '/api': {
-        target: 'http://127.0.0.1:9384/',
+        target: 'http://127.0.0.1:29384/',
         changeOrigin: true,
         ws: true,
       },
       '/v1': {
-        target: 'http://127.0.0.1:9384/',
+        target: 'http://127.0.0.1:29384/',
         changeOrigin: true,
         ws: true,
       },
