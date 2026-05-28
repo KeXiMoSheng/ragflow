@@ -14,6 +14,7 @@ import { useTranslation } from 'react-i18next';
 import { useSearchParams } from 'react-router';
 import { DatasetCard } from './dataset-card';
 import { DatasetCreatingDialog } from './dataset-creating-dialog';
+import { useFetchUserInfo } from '@/hooks/use-user-setting-request';
 import { useSaveKnowledge } from './hooks';
 import { useRenameDataset } from './use-rename-dataset';
 import { useSelectOwners } from './use-select-owners';
@@ -40,6 +41,10 @@ export default function Datasets() {
   } = useFetchNextKnowledgeListByPage();
 
   const owners = useSelectOwners();
+
+  const {
+    data: { is_superuser: isSuperuser },
+  } = useFetchUserInfo();
 
   const {
     datasetRenameLoading,
@@ -85,10 +90,12 @@ export default function Datasets() {
               onChange={handleFilterSubmit}
               icon={'datasets'}
             >
-              <Button onClick={showModal}>
-                <Plus className="size-[1em]" />
-                {t('knowledgeList.createKnowledgeBase')}
-              </Button>
+              {isSuperuser && (
+                <Button onClick={showModal}>
+                  <Plus className="size-[1em]" />
+                  {t('knowledgeList.createKnowledgeBase')}
+                </Button>
+              )}
             </ListFilterBar>
           </header>
 
@@ -120,7 +127,7 @@ export default function Datasets() {
                 className="w-[480px] p-14"
                 isSearch
                 type={EmptyCardType.Dataset}
-                onClick={() => showModal()}
+                onClick={() => isSuperuser && showModal()}
               />
             </div>
           )}
@@ -135,7 +142,7 @@ export default function Datasets() {
             size="large"
             className="w-[480px] p-14"
             type={EmptyCardType.Dataset}
-            onClick={() => showModal()}
+            onClick={() => isSuperuser && showModal()}
           />
         </article>
       )}

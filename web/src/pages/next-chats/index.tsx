@@ -6,6 +6,7 @@ import { RenameDialog } from '@/components/rename-dialog';
 import { Button } from '@/components/ui/button';
 import { RAGFlowPagination } from '@/components/ui/ragflow-pagination';
 import { useFetchChatList } from '@/hooks/use-chat-request';
+import { useFetchUserInfo } from '@/hooks/use-user-setting-request';
 import { pick } from 'lodash';
 import { Plus } from 'lucide-react';
 import { useCallback, useEffect } from 'react';
@@ -26,6 +27,10 @@ export default function ChatList() {
     onChatRenameOk,
     chatRenameLoading,
   } = useRenameChat();
+
+  const {
+    data: { is_superuser: isSuperuser },
+  } = useFetchUserInfo();
 
   const handlePageChange = useCallback(
     (page: number, pageSize?: number) => {
@@ -59,10 +64,12 @@ export default function ChatList() {
               onSearchChange={handleInputChange}
               searchString={searchString}
             >
-              <Button data-testid="create-chat" onClick={handleShowCreateModal}>
-                <Plus className="size-[1em]" />
-                {t('chat.createChat')}
-              </Button>
+              {isSuperuser && (
+                <Button data-testid="create-chat" onClick={handleShowCreateModal}>
+                  <Plus className="size-[1em]" />
+                  {t('chat.createChat')}
+                </Button>
+              )}
             </ListFilterBar>
           </header>
 
@@ -109,7 +116,7 @@ export default function ChatList() {
             size="large"
             className="w-[480px] p-14"
             type={EmptyCardType.Chat}
-            onClick={() => handleShowCreateModal()}
+            onClick={() => isSuperuser && handleShowCreateModal()}
             testId="chats-empty-create"
           />
         </article>
