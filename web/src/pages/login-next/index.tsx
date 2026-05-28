@@ -358,25 +358,15 @@ const Login = () => {
         Y={'-10%'}
         color={'rgb(128, 255, 248)'}
       />
-      <div className=" h-[inherit] relative overflow-auto">
+      <div className=" h-[inherit] relative ">
         <BgSvg isPaused />
 
-        <div className="z-20 absolute top-3 flex flex-col items-center mb-12 w-full text-text-primary">
-          <div className="flex items-center mb-4 w-full pl-10 pt-10 ">
-            <div className="l-24 w-12 h-12 p-2 rounded-lg flex items-center justify-center mr-3">
-              <img
-                src={'/logo.png'}
-                alt="logo"
-                className=" w-36 h-12 mr-[12]  cursor-pointer"
-              />
-            </div>
-            {/* <div className="text-xl font-bold self-center">招商局集团运维知识库</div> */}
-          </div>
+        {/* <div className="z-20 absolute top-3 flex flex-col items-center mb-12 w-full text-text-primary">
           <h1 className="text-[36px] font-medium  text-center mb-2">
             招商局集团运维知识库
           </h1>
-        </div>
-        <div className="relative z-10 flex flex-col items-center justify-center min-h-[1050px] px-4 sm:px-6 lg:px-8">
+        </div> */}
+        <div className="relative z-10 flex flex-col items-center justify-center  px-4 sm:px-6 lg:px-8">
           {/* Login Form */}
           <FlipCard3D isLoginPage={isLoginPage}>
             <LoginFormContent

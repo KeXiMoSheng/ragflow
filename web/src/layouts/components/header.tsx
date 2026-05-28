@@ -16,7 +16,7 @@ import { TenantRole } from '@/pages/user-setting/constants';
 import { Routes } from '@/routes';
 import { LucideChevronDown } from 'lucide-react';
 import React, { useMemo } from 'react';
-import { Link, useLocation } from 'react-router';
+import { Link } from 'react-router';
 import { BellButton } from './bell-button';
 import GlobalNavbar from './global-navbar';
 import ThemeButton from './theme-button';
@@ -27,8 +27,6 @@ export function Header({
   className,
   ...props
 }: React.HTMLAttributes<HTMLElement>) {
-  const { pathname } = useLocation();
-
   const changeLanguage = useChangeLanguage();
 
   const {
@@ -58,12 +56,12 @@ export function Header({
       {...props}
     >
       <div className="inline-flex items-center">
-        <Link
+        {/* <Link
           to={Routes.Root}
           aria-current={pathname === Routes.Root ? 'page' : undefined}
         >
           <img src={'/logo.png'} alt="zhaoshang logo" className="w-24 h-12" />
-        </Link>
+        </Link> */}
       </div>
 
       <GlobalNavbar />
