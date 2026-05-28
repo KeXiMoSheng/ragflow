@@ -8,7 +8,7 @@ import {
 } from '@/hooks/use-login-request';
 import { useSystemConfig } from '@/hooks/use-system-request';
 import { rsaPsw } from '@/utils';
-import { useCallback, useContext, useEffect, useRef, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router';
 
@@ -314,43 +314,32 @@ const Login = () => {
     resolver: zodResolver(FormSchema),
   });
 
-  const onCheck = useCallback(
-    async (params: FormValues) => {
-      try {
-        const rsaPassWord = rsaPsw(params.password) as string;
+  const onCheck = async (params: FormValues) => {
+    try {
+      const rsaPassWord = rsaPsw(params.password) as string;
 
-        if (title === 'login') {
-          const code = await login({
-            email: `${params.email}`.trim(),
-            password: rsaPassWord,
-          });
-          if (code === 0) {
-            navigate('/');
-          }
-        } else {
-          const code = await register({
-            nickname: params.nickname,
-            email: params.email,
-            password: rsaPassWord,
-          });
-          if (code === 0) {
-            setTitle('login');
-          }
+      if (title === 'login') {
+        const code = await login({
+          email: `${params.email}`.trim(),
+          password: rsaPassWord,
+        });
+        if (code === 0) {
+          navigate('/');
         }
-      } catch (errorInfo) {
-        console.log('Failed:', errorInfo);
+      } else {
+        const code = await register({
+          nickname: params.nickname,
+          email: params.email,
+          password: rsaPassWord,
+        });
+        if (code === 0) {
+          setTitle('login');
+        }
       }
-    },
-    [login, navigate, register, title],
-  );
-
-  const autoSubmitRef = useRef(false);
-  useEffect(() => {
-    if (title === 'login' && !autoSubmitRef.current) {
-      autoSubmitRef.current = true;
-      form.handleSubmit(onCheck)();
+    } catch (errorInfo) {
+      console.log('Failed:', errorInfo);
     }
-  }, [title, form, onCheck]);
+  };
 
   return (
     <>
