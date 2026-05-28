@@ -62,7 +62,7 @@ export function Header({
           to={Routes.Root}
           aria-current={pathname === Routes.Root ? 'page' : undefined}
         >
-          <img src={'/kingdee.ico'} alt="kingdee logo" className="size-10" />
+          <img src={'/logo.png'} alt="zhaoshang logo" className="w-24 h-12" />
         </Link>
       </div>
 
