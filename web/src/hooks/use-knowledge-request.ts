@@ -39,6 +39,7 @@ import {
 } from './logic-hooks';
 import { extractParserConfigExt } from './parser-config-utils';
 import { useSetPaginationParams } from './route-hook';
+import { useFetchUserInfo } from './use-user-setting-request';
 
 export const enum KnowledgeApiAction {
   FetchKnowledgeListByPage = 'fetchKnowledgeListByPage',
@@ -319,6 +320,37 @@ export const useUpdateKnowledge = (shouldFetchList = false) => {
   });
 
   return { data, loading, saveKnowledgeConfiguration: mutateAsync };
+};
+
+/**
+ * Determine whether the current logged-in user is the owner (creator) of
+ * the given knowledge base.
+ *
+ * Ownership rule (consistent with backend `KnowledgebaseService.accessible`):
+ *   user.id === dataset.tenant_id (or dataset.created_by)
+ *
+ * Usage:
+ *   const isOwner = useIsKnowledgeBaseOwner(dataset);
+ *   if (isOwner) { ... }
+ *
+ * @param dataset Optional dataset object. When omitted, will fall back to the
+ *                dataset currently loaded by `useFetchKnowledgeBaseConfiguration`
+ *                based on the URL `id` param.
+ */
+export const useIsKnowledgeBaseOwner = (
+  dataset?: Pick<IDataset, 'tenant_id' | 'created_by'> | null,
+): boolean => {
+  const { data: userInfo } = useFetchUserInfo();
+
+  return useMemo(() => {
+    const userId = userInfo?.id;
+    if (!userId || !dataset) {
+      return false;
+    }
+    return (
+      dataset.tenant_id === userId || dataset.created_by === userId
+    );
+  }, [userInfo?.id, dataset]);
 };
 
 export const useFetchKnowledgeBaseConfiguration = (props?: {
