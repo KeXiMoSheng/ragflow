@@ -372,7 +372,7 @@ window.addEventListener('message',e=>{
                               </div>
                               <div className="flex items-center space-x-2">
                                 <RadioGroupItem
-                                  value={ThemeEnum.Dark}
+                                  value={ThemeEnum.Light}
                                   id="dark"
                                 />
                                 <Label htmlFor="dark" className="text-sm">

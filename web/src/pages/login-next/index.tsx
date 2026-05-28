@@ -374,11 +374,11 @@ const Login = () => {
 
         <div className="z-20 absolute top-3 flex flex-col items-center mb-12 w-full text-text-primary">
           <div className="flex items-center mb-4 w-full pl-10 pt-10 ">
-            <div className="w-12 h-12 p-2 rounded-lg flex items-center justify-center mr-3">
+            <div className="l-24 w-12 h-12 p-2 rounded-lg flex items-center justify-center mr-3">
               <img
                 src={'/logo.png'}
                 alt="logo"
-                className="l-12 w-36 h-12 mr-[12]  cursor-pointer"
+                className=" w-36 h-12 mr-[12]  cursor-pointer"
               />
             </div>
             {/* <div className="text-xl font-bold self-center">招商局集团运维知识库</div> */}
