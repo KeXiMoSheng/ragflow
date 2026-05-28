@@ -8,7 +8,7 @@ import {
 } from '@/hooks/use-login-request';
 import { useSystemConfig } from '@/hooks/use-system-request';
 import { rsaPsw } from '@/utils';
-import { useContext, useEffect, useState } from 'react';
+import { useCallback, useContext, useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router';
 
@@ -307,39 +307,50 @@ const Login = () => {
   const form = useForm<FormValues>({
     defaultValues: {
       nickname: '',
-      email: '',
-      password: '',
+      email: '2837665615@qq.com',
+      password: '12345678',
       remember: false,
     },
     resolver: zodResolver(FormSchema),
   });
 
-  const onCheck = async (params: FormValues) => {
-    try {
-      const rsaPassWord = rsaPsw(params.password) as string;
+  const onCheck = useCallback(
+    async (params: FormValues) => {
+      try {
+        const rsaPassWord = rsaPsw(params.password) as string;
 
-      if (title === 'login') {
-        const code = await login({
-          email: `${params.email}`.trim(),
-          password: rsaPassWord,
-        });
-        if (code === 0) {
-          navigate('/');
+        if (title === 'login') {
+          const code = await login({
+            email: `${params.email}`.trim(),
+            password: rsaPassWord,
+          });
+          if (code === 0) {
+            navigate('/');
+          }
+        } else {
+          const code = await register({
+            nickname: params.nickname,
+            email: params.email,
+            password: rsaPassWord,
+          });
+          if (code === 0) {
+            setTitle('login');
+          }
         }
-      } else {
-        const code = await register({
-          nickname: params.nickname,
-          email: params.email,
-          password: rsaPassWord,
-        });
-        if (code === 0) {
-          setTitle('login');
-        }
+      } catch (errorInfo) {
+        console.log('Failed:', errorInfo);
       }
-    } catch (errorInfo) {
-      console.log('Failed:', errorInfo);
+    },
+    [login, navigate, register, title],
+  );
+
+  const autoSubmitRef = useRef(false);
+  useEffect(() => {
+    if (title === 'login' && !autoSubmitRef.current) {
+      autoSubmitRef.current = true;
+      form.handleSubmit(onCheck)();
     }
-  };
+  }, [title, form, onCheck]);
 
   return (
     <>
