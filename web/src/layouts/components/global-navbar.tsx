@@ -4,6 +4,7 @@ import { Link, useLocation } from 'react-router';
 
 import { LucideHouse } from 'lucide-react';
 
+import { useFetchUserInfo } from '@/hooks/use-user-setting-request';
 import { cn } from '@/lib/utils';
 import { Routes } from '@/routes';
 import { supportsCssAnchor } from '@/utils/css-support';
@@ -17,26 +18,29 @@ const PathMap = {
   [Routes.Files]: [Routes.Files],
 } as const;
 
-const menuItems = [
-  { path: Routes.Root, name: 'header.Root', icon: LucideHouse },
-  { path: Routes.Datasets, name: 'header.dataset' /* icon: Library, */ },
+const allMenuItems = [
+  { path: Routes.Root, name: 'header.Root', icon: LucideHouse, adminOnly: false },
+  { path: Routes.Datasets, name: 'header.dataset', adminOnly: false },
   {
     path: Routes.Chats,
     name: 'header.chat',
-    /* icon: MessageSquareText, */ 'data-testid': 'nav-chat',
+    'data-testid': 'nav-chat',
+    adminOnly: false,
   },
   {
     path: Routes.Searches,
     name: 'header.search',
-    /* icon: Search, */ 'data-testid': 'nav-search',
+    'data-testid': 'nav-search',
+    adminOnly: true,
   },
   {
     path: Routes.Agents,
     name: 'header.flow',
-    /* icon: Cpu, */ 'data-testid': 'nav-agent',
+    'data-testid': 'nav-agent',
+    adminOnly: true,
   },
-  { path: Routes.Memories, name: 'header.memories' /* icon: Cpu, */ },
-  { path: Routes.Files, name: 'header.fileManager' /* icon: File, */ },
+  { path: Routes.Memories, name: 'header.memories', adminOnly: true },
+  { path: Routes.Files, name: 'header.fileManager', adminOnly: true },
 ];
 
 const GlobalNavbar = supportsCssAnchor
@@ -44,6 +48,14 @@ const GlobalNavbar = supportsCssAnchor
       const { t } = useTranslation();
       const { pathname } = useLocation();
       const navbarAnchorNamePrefix = useId().replace(/:/g, '');
+      const {
+        data: { is_superuser: isSuperuser },
+      } = useFetchUserInfo();
+
+      const menuItems = useMemo(
+        () => allMenuItems.filter((item) => !item.adminOnly || isSuperuser),
+        [isSuperuser],
+      );
 
       const activePath = useMemo(() => {
         return (
@@ -59,13 +71,13 @@ const GlobalNavbar = supportsCssAnchor
 
       const hasAnyActive = useMemo(
         () => menuItems.some(({ path }) => path === activePath),
-        [activePath],
+        [activePath, menuItems],
       );
 
       return (
         <nav>
           <ul className="relative flex items-center p-1 bg-bg-card rounded-full border border-border-button">
-            {menuItems.map(({ path, name, icon: Icon, ...props }) => {
+            {menuItems.map(({ path, name, icon: Icon, adminOnly, ...props }) => {
               const isActive = path === activePath;
               const anchorName = `--${navbarAnchorNamePrefix}${path === Routes.Root ? '-root' : path.replace('/', '-')}`;
 
@@ -110,6 +122,14 @@ const GlobalNavbar = supportsCssAnchor
   : () => {
       const { t } = useTranslation();
       const { pathname } = useLocation();
+      const {
+        data: { is_superuser: isSuperuser },
+      } = useFetchUserInfo();
+
+      const menuItems = useMemo(
+        () => allMenuItems.filter((item) => !item.adminOnly || isSuperuser),
+        [isSuperuser],
+      );
 
       const activePath = useMemo(() => {
         return (
@@ -124,7 +144,7 @@ const GlobalNavbar = supportsCssAnchor
       return (
         <nav>
           <ul className="flex items-center p-1 bg-bg-card rounded-full border border-border-button">
-            {menuItems.map(({ path, name, icon: Icon, ...props }) => {
+            {menuItems.map(({ path, name, icon: Icon, adminOnly, ...props }) => {
               const isActive = path === activePath;
 
               return (
