@@ -341,16 +341,19 @@ export const useIsKnowledgeBaseOwner = (
   dataset?: Pick<IDataset, 'tenant_id' | 'created_by'> | null,
 ): boolean => {
   const { data: userInfo } = useFetchUserInfo();
+  const { data: configData } = useFetchKnowledgeBaseConfiguration();
 
   return useMemo(() => {
     const userId = userInfo?.id;
-    if (!userId || !dataset) {
+    const resolvedDataset = dataset ?? configData;
+    if (!userId || !resolvedDataset?.tenant_id) {
       return false;
     }
     return (
-      dataset.tenant_id === userId || dataset.created_by === userId
+      resolvedDataset.tenant_id === userId ||
+      resolvedDataset.created_by === userId
     );
-  }, [userInfo?.id, dataset]);
+  }, [userInfo?.id, dataset, configData]);
 };
 
 export const useFetchKnowledgeBaseConfiguration = (props?: {
