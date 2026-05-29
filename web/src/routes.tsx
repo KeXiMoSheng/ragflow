@@ -177,6 +177,16 @@ const routeConfigOptions = [
       {
         path: Routes.Root,
         Component: () => import('@/pages/home'),
+        loader: () => {
+          const authorization = authorizationUtil.getAuthorization();
+          if (authorization) {
+            const userInfo = authorizationUtil.getUserInfoObject();
+            if (!userInfo?.is_superuser) {
+              return redirect(Routes.Chats);
+            }
+          }
+          return null;
+        },
       },
     ],
   },
