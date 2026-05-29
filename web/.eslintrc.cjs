@@ -25,6 +25,7 @@ module.exports = {
     node: true,
   },
   rules: {
+    '@typescript-eslint/no-unused-vars': 'warn',
     '@typescript-eslint/no-use-before-define': [
       'warn',
       {
