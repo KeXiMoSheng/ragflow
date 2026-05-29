@@ -1,14 +1,30 @@
+import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { useSetModalState } from '@/hooks/common-hooks';
 import { Docagg } from '@/interfaces/database/chat';
 import PdfDrawer from '@/pages/next-search/document-preview-modal';
 import { middleEllipsis } from '@/utils/common-util';
-import { useState } from 'react';
+import { downloadDocument } from '@/utils/file-util';
+import { Download } from 'lucide-react';
+import { useCallback, useState } from 'react';
 import FileIcon from '../file-icon';
 
 export function ReferenceDocumentList({ list }: { list: Docagg[] }) {
   const { visible, showModal, hideModal } = useSetModalState();
   const [selectedDocument, setSelectedDocument] = useState<Docagg>();
+
+  const handleDownload = useCallback(
+    (item: Docagg) => async (e: React.MouseEvent) => {
+      e.stopPropagation();
+      try {
+        await downloadDocument({ id: item.doc_id, filename: item.doc_name });
+      } catch (error) {
+        console.error('Error downloading document:', error);
+      }
+    },
+    [],
+  );
+
   return (
     <section className="flex gap-3 flex-wrap">
       {list.map((item) => (
@@ -30,9 +46,16 @@ export function ReferenceDocumentList({ list }: { list: Docagg[] }) {
             >
               {middleEllipsis(item.doc_name)}
             </NewDocumentLink> */}
-            <div className="text-text-sub-title-invert">
+            <div className="text-text-sub-title-invert flex-1">
               {middleEllipsis(item.doc_name)}
             </div>
+            <Button
+              size="icon-xs"
+              variant="ghost"
+              onClick={handleDownload(item)}
+            >
+              <Download className="size-[1em]" />
+            </Button>
           </CardContent>
         </Card>
       ))}
