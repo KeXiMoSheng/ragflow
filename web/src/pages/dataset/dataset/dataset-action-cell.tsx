@@ -7,7 +7,6 @@ import {
 } from '@/components/ui/hover-card';
 import { DocumentType } from '@/constants/knowledge';
 import { useRemoveDocument } from '@/hooks/use-document-request';
-import { useIsKnowledgeBaseOwner } from '@/hooks/use-knowledge-request';
 import { IDocumentInfo } from '@/interfaces/database/document';
 import { downloadDatasetDocument } from '@/services/file-manager-service';
 import { formatFileSize } from '@/utils/common-util';
@@ -35,7 +34,6 @@ export function DatasetActionCell({
   const isVirtualDocument = type === DocumentType.Virtual;
 
   const { removeDocument } = useRemoveDocument();
-  const isOwner = useIsKnowledgeBaseOwner();
 
   const onDownloadDocument = useCallback(async () => {
     try {
@@ -68,16 +66,14 @@ export function DatasetActionCell({
       flex gap-2 items-center opacity-0
       transition-opacity group-hover:opacity-100 group-focus-within:opacity-100"
     >
-      {isOwner && (
-        <Button
-          size="icon-xs"
-          variant="ghost"
-          disabled={isRunning}
-          onClick={handleRename}
-        >
-          <PenLine className="size-[1em]" />
-        </Button>
-      )}
+      <Button
+        size="icon-xs"
+        variant="ghost"
+        disabled={isRunning}
+        onClick={handleRename}
+      >
+        <PenLine className="size-[1em]" />
+      </Button>
       <HoverCard>
         <HoverCardTrigger>
           <Button size="icon-xs" variant="ghost" disabled={isRunning}>
@@ -115,18 +111,16 @@ export function DatasetActionCell({
           <Download className="size-[1em]" />
         </Button>
       )}
-      {isOwner && (
-        <ConfirmDeleteDialog onOk={handleRemove}>
-          <Button
-            data-testid="document-delete"
-            size="icon-xs"
-            variant="ghost"
-            disabled={isRunning}
-          >
-            <Trash2 className="size-[1em]" />
-          </Button>
-        </ConfirmDeleteDialog>
-      )}
+      <ConfirmDeleteDialog onOk={handleRemove}>
+        <Button
+          data-testid="document-delete"
+          size="icon-xs"
+          variant="ghost"
+          disabled={isRunning}
+        >
+          <Trash2 className="size-[1em]" />
+        </Button>
+      </ConfirmDeleteDialog>
     </div>
   );
 }
