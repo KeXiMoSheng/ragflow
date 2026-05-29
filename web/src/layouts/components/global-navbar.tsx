@@ -19,8 +19,13 @@ const PathMap = {
 } as const;
 
 const allMenuItems = [
-  { path: Routes.Root, name: 'header.Root', icon: LucideHouse, adminOnly: false },
-  { path: Routes.Datasets, name: 'header.dataset', adminOnly: false },
+  {
+    path: Routes.Root,
+    name: 'header.Root',
+    icon: LucideHouse,
+    adminOnly: true,
+  },
+  { path: Routes.Datasets, name: 'header.dataset', adminOnly: true },
   {
     path: Routes.Chats,
     name: 'header.chat',
@@ -77,28 +82,30 @@ const GlobalNavbar = supportsCssAnchor
       return (
         <nav>
           <ul className="relative flex items-center p-1 bg-bg-card rounded-full border border-border-button">
-            {menuItems.map(({ path, name, icon: Icon, adminOnly, ...props }) => {
-              const isActive = path === activePath;
-              const anchorName = `--${navbarAnchorNamePrefix}${path === Routes.Root ? '-root' : path.replace('/', '-')}`;
+            {menuItems.map(
+              ({ path, name, icon: Icon, adminOnly, ...props }) => {
+                const isActive = path === activePath;
+                const anchorName = `--${navbarAnchorNamePrefix}${path === Routes.Root ? '-root' : path.replace('/', '-')}`;
 
-              return (
-                <li key={path} className="relative" style={{ anchorName }}>
-                  <Link
-                    {...props}
-                    to={path}
-                    className={cn(
-                      'h-10 px-6 text-base inline-flex items-center justify-center',
-                      'hover:text-current focus-visible:text-current rounded-full transition-all',
-                      isActive && '!text-bg-base',
-                    )}
-                    aria-current={isActive ? 'page' : undefined}
-                  >
-                    {Icon && <Icon className="size-6 stroke-[1.5]" />}
-                    <span className={cn(Icon && 'sr-only')}>{t(name)}</span>
-                  </Link>
-                </li>
-              );
-            })}
+                return (
+                  <li key={path} className="relative" style={{ anchorName }}>
+                    <Link
+                      {...props}
+                      to={path}
+                      className={cn(
+                        'h-10 px-6 text-base inline-flex items-center justify-center',
+                        'hover:text-current focus-visible:text-current rounded-full transition-all',
+                        isActive && '!text-bg-base',
+                      )}
+                      aria-current={isActive ? 'page' : undefined}
+                    >
+                      {Icon && <Icon className="size-6 stroke-[1.5]" />}
+                      <span className={cn(Icon && 'sr-only')}>{t(name)}</span>
+                    </Link>
+                  </li>
+                );
+              },
+            )}
 
             <li
               className={cn(
@@ -144,32 +151,34 @@ const GlobalNavbar = supportsCssAnchor
       return (
         <nav>
           <ul className="flex items-center p-1 bg-bg-card rounded-full border border-border-button">
-            {menuItems.map(({ path, name, icon: Icon, adminOnly, ...props }) => {
-              const isActive = path === activePath;
+            {menuItems.map(
+              ({ path, name, icon: Icon, adminOnly, ...props }) => {
+                const isActive = path === activePath;
 
-              return (
-                <li key={path}>
-                  <Link
-                    {...props}
-                    to={path}
-                    className={cn(
-                      'h-10 px-6 text-base inline-flex items-center justify-center',
-                      'hover:text-current focus-visible:text-current rounded-full transition-all',
-                      isActive &&
-                        '!text-bg-base bg-text-primary border-b-2 border-b-accent-primary',
-                    )}
-                    aria-label={t(name)}
-                    aria-current={isActive ? 'page' : undefined}
-                  >
-                    {Icon ? (
-                      <Icon className="size-6 stroke-[1.5]" />
-                    ) : (
-                      <span>{t(name)}</span>
-                    )}
-                  </Link>
-                </li>
-              );
-            })}
+                return (
+                  <li key={path}>
+                    <Link
+                      {...props}
+                      to={path}
+                      className={cn(
+                        'h-10 px-6 text-base inline-flex items-center justify-center',
+                        'hover:text-current focus-visible:text-current rounded-full transition-all',
+                        isActive &&
+                          '!text-bg-base bg-text-primary border-b-2 border-b-accent-primary',
+                      )}
+                      aria-label={t(name)}
+                      aria-current={isActive ? 'page' : undefined}
+                    >
+                      {Icon ? (
+                        <Icon className="size-6 stroke-[1.5]" />
+                      ) : (
+                        <span>{t(name)}</span>
+                      )}
+                    </Link>
+                  </li>
+                );
+              },
+            )}
           </ul>
         </nav>
       );

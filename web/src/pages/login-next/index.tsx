@@ -324,7 +324,7 @@ const Login = () => {
           password: rsaPassWord,
         });
         if (code === 0) {
-          navigate('/');
+          navigate('/chats');
         }
       } else {
         const code = await register({
@@ -361,11 +361,15 @@ const Login = () => {
       <div className=" h-[inherit] relative ">
         <BgSvg isPaused />
 
-        {/* <div className="z-20 absolute top-3 flex flex-col items-center mb-12 w-full text-text-primary">
-          <h1 className="text-[36px] font-medium  text-center mb-2">
-            招商局集团运维知识库
-          </h1>
-        </div> */}
+        <div className="z-20 absolute top-3 flex flex-col items-center mb-12 w-full text-text-primary">
+          <div className="p-2 rounded-lg flex w-full">
+            <img
+              src={'/logo.png'}
+              alt="logo"
+              className=" w-36 h-12 mr-[12]  cursor-pointer block ml-20 mr-20"
+            />
+          </div>
+        </div>
         <div className="relative z-10 flex flex-col items-center justify-center  px-4 sm:px-6 lg:px-8">
           {/* Login Form */}
           <FlipCard3D isLoginPage={isLoginPage}>
