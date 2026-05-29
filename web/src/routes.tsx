@@ -10,8 +10,14 @@ import { IS_ENTERPRISE } from './pages/admin/utils';
 import authorizationUtil from './utils/authorization-util';
 
 const adminOnlyLoader = () => {
+  const authorization = authorizationUtil.getAuthorization();
+  if (!authorization) {
+    console.log('Access denied: User is not logged in');
+    return redirect(Routes.Login);
+  }
   const userInfo = authorizationUtil.getUserInfoObject();
   if (!userInfo?.is_superuser) {
+    console.log('Access denied: User is not an admin');
     return redirect(Routes.Chats);
   }
   return null;
