@@ -9,6 +9,14 @@ import FallbackComponent from './components/fallback-component';
 import { IS_ENTERPRISE } from './pages/admin/utils';
 import authorizationUtil from './utils/authorization-util';
 
+const adminOnlyLoader = () => {
+  const userInfo = authorizationUtil.getUserInfoObject();
+  if (!userInfo?.is_superuser) {
+    return redirect(Routes.Chats);
+  }
+  return null;
+};
+
 export enum Routes {
   Root = '/',
   Login = '/login-next',
@@ -176,10 +184,12 @@ const routeConfigOptions = [
     children: [
       {
         path: Routes.Datasets,
+        loader: adminOnlyLoader,
         Component: () => import('@/pages/datasets'),
       },
       {
         path: Routes.DatasetBase,
+        loader: adminOnlyLoader,
         Component: () => import('@/pages/dataset'),
         children: [
           {
@@ -210,28 +220,34 @@ const routeConfigOptions = [
       },
       {
         path: Routes.Searches,
+        loader: adminOnlyLoader,
         Component: () => import('@/pages/next-searches'),
       },
       {
         path: `${Routes.Search}/:id`,
         layout: false,
+        loader: adminOnlyLoader,
         Component: () => import('@/pages/next-search'),
       },
       {
         path: Routes.Agents,
+        loader: adminOnlyLoader,
         Component: () => import('@/pages/agents'),
       },
       {
         path: Routes.AgentTemplates,
         layout: false,
+        loader: adminOnlyLoader,
         Component: () => import('@/pages/agents/agent-templates'),
       },
       {
         path: Routes.Memories,
+        loader: adminOnlyLoader,
         Component: () => import('@/pages/memories'),
       },
       {
         path: `${Routes.Memory}`,
+        loader: adminOnlyLoader,
         Component: () => import('@/pages/memory'),
         children: [
           {
@@ -246,10 +262,12 @@ const routeConfigOptions = [
       },
       {
         path: Routes.Files,
+        loader: adminOnlyLoader,
         Component: () => import('@/pages/files'),
       },
       {
         path: Routes.Skills,
+        loader: adminOnlyLoader,
         Component: () => import('@/pages/skills'),
       },
       {
@@ -310,6 +328,7 @@ const routeConfigOptions = [
   },
   {
     path: Routes.Agent,
+    loader: adminOnlyLoader,
     children: [
       {
         path: `${Routes.Agent}/:id`,
