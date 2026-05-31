@@ -459,23 +459,13 @@ async def list_chats():
 @login_required
 async def get_chat(chat_id):
     try:
-        tenants = await thread_pool_exec(UserTenantService.query, user_id=current_user.id)
-        for tenant in tenants:
-            if await thread_pool_exec(
-                DialogService.query,
-                tenant_id=tenant.tenant_id, id=chat_id, status=StatusEnum.VALID.value,
-            ):
-                break
-        else:
-            return get_json_result(
-                data=False,
-                message="No authorization.",
-                code=RetCode.AUTHENTICATION_ERROR,
-            )
-
+        # All authenticated users can view any chat (no tenant-based restriction)
         ok, chat = await thread_pool_exec(DialogService.get_by_id, chat_id)
         if not ok:
             return get_data_error_result(message="Chat not found!")
+        # Verify chat is valid
+        if str(getattr(chat, "status", "")) != StatusEnum.VALID.value:
+            return get_data_error_result(message="Chat not available!")
         return get_json_result(data=_build_chat_response(chat))
     except Exception as ex:
         return server_error_response(ex)

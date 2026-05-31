@@ -55,44 +55,15 @@ type ChatWithKBNames struct {
 // ListChatsResponse list chats response
 type ListChatsResponse struct {
 	Chats []*ChatWithKBNames `json:"chats"`
+	Total int64              `json:"total"`
 }
 
-// ListChats list chats for a user
+// ListChats list chats for a user (all chats visible to all users)
 func (s *ChatService) ListChats(userID, status, keywords string, page, pageSize int, orderby string, desc bool) (*ListChatsResponse, error) {
-	// Get tenant IDs by user ID
-	tenantIDs, err := s.userTenantDAO.GetTenantIDsByUserID(userID)
+	// Query all valid chats without tenant filtering - all users can see all chats
+	chats, total, err := s.chatDAO.ListAllChats(page, pageSize, orderby, desc, keywords, status)
 	if err != nil {
 		return nil, err
-	}
-
-	// For now, use the first tenant ID (primary tenant)
-	// This matches the Python implementation behavior
-	var tenantID string
-	if len(tenantIDs) > 0 {
-		tenantID = tenantIDs[0]
-	} else {
-		tenantID = userID
-	}
-
-	// Query chats by tenant ID
-	chats, err := s.chatDAO.ListByTenantID(tenantID, status)
-	if err != nil {
-		return nil, err
-	}
-
-	total := int64(len(chats))
-
-	if page > 0 && pageSize > 0 {
-		start := (page - 1) * pageSize
-		end := start + pageSize
-		if start < int(total) {
-			if end > int(total) {
-				end = int(total)
-			}
-			chats = chats[start:end]
-		} else {
-			chats = []*entity.Chat{}
-		}
 	}
 
 	// Enrich with knowledge base names
@@ -108,6 +79,7 @@ func (s *ChatService) ListChats(userID, status, keywords string, page, pageSize 
 
 	return &ListChatsResponse{
 		Chats: chatsWithKBNames,
+		Total: total,
 	}, nil
 }
 
@@ -631,39 +603,16 @@ type GetChatResponse struct {
 	KBNames    []string `json:"kb_names"`
 }
 
-// GetChat gets chat detail by ID with permission check
+// GetChat gets chat detail by ID (all authenticated users can access any chat)
 func (s *ChatService) GetChat(userID string, chatID string) (*GetChatResponse, error) {
-	// Step 1: Get user tenants (same as Python UserTenantService.query(user_id=current_user.id))
-	tenants, err := s.userTenantDAO.GetByUserID(userID)
-	if err != nil {
-		return nil, fmt.Errorf("failed to get user tenants: %w", err)
-	}
-
-	// Step 2: Check if user has permission to access this chat
-	// Python: for tenant in tenants: if DialogService.query(tenant_id=tenant.tenant_id, id=chat_id, status=StatusEnum.VALID.value): break
-	hasPermission := false
-	for _, tenant := range tenants {
-		chats, err := s.chatDAO.QueryByTenantIDAndID(tenant.TenantID, chatID, "1")
-		if err != nil {
-			continue // Try next tenant
-		}
-		if len(chats) > 0 {
-			hasPermission = true
-			break
-		}
-	}
-
-	if !hasPermission {
-		return nil, fmt.Errorf("no authorization")
-	}
-
-	// Step 3: Get chat detail (same as Python DialogService.get_by_id(chat_id))
-	chat, err := s.chatDAO.GetByID(chatID)
+	// Get chat detail without tenant-based permission check
+	// All authenticated users can view any chat
+	chat, err := s.chatDAO.GetByIDAndStatus(chatID, "1")
 	if err != nil {
 		return nil, fmt.Errorf("chat not found")
 	}
 
-	// Step 4: Build response with kb_names (same as Python _build_chat_response)
+	// Build response with kb_names (same as Python _build_chat_response)
 	// Resolve kb_ids to kb_names
 	kbNames, datasetIDs := s.getDatasetNamesAndIDs(chat.KBIDs)
 

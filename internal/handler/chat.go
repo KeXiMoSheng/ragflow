@@ -318,19 +318,17 @@ func (h *ChatHandler) GetChat(c *gin.Context) {
 	chat, err := h.chatService.GetChat(userID, chatID)
 	if err != nil {
 		errMsg := err.Error()
-		// Check if it's an authorization error
-		if errMsg == "no authorization" {
+		// Not found error
+		if errMsg == "chat not found" {
 			c.JSON(http.StatusOK, gin.H{
-				"code":    common.CodeAuthenticationError,
-				"data":    false,
-				"message": "No authorization.",
+				"code":    common.CodeDataError,
+				"data":    nil,
+				"message": err.Error(),
 			})
 			return
 		}
-		// Not found error
-		c.JSON(http.StatusOK, gin.H{
-			"code":    common.CodeDataError,
-			"data":    nil,
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"code":    500,
 			"message": err.Error(),
 		})
 		return
