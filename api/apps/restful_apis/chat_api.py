@@ -724,14 +724,14 @@ async def bulk_delete_chats():
 @manager.route("/chats/<chat_id>/sessions", methods=["POST"])  # noqa: F821
 @login_required
 async def create_session(chat_id):
-    """Create a new conversation session for the given chat, owned by the authenticated user."""
-    if not await _ensure_owned_chat(chat_id):
-        return get_json_result(data=False, message="No authorization.", code=RetCode.AUTHENTICATION_ERROR)
+    """Create a new conversation session for the given chat. All authenticated users can create."""
     try:
         req = await get_request_json()
-        ok, dia = DialogService.get_by_id(chat_id)
-        if not ok:
+        ok, dia = await thread_pool_exec(DialogService.get_by_id, chat_id)
+        if not ok or str(getattr(dia, "status", "")) != StatusEnum.VALID.value:
+            logging.warning("create_session: chat not found or invalid chat_id=%s", chat_id)
             return get_data_error_result(message="Chat not found!")
+        logging.info("create_session: user=%s chat_id=%s", current_user.id, chat_id)
         name = req.get("name", "New session")
         if not isinstance(name, str) or not name.strip():
             return get_data_error_result(message="`name` can not be empty.")
@@ -757,12 +757,12 @@ async def create_session(chat_id):
 @login_required
 async def list_sessions(chat_id):
     try:
-        if not await _ensure_owned_chat(chat_id):
-            return get_json_result(
-                data=False,
-                message="No authorization.",
-                code=RetCode.AUTHENTICATION_ERROR,
-            )
+        # All authenticated users can view sessions of any chat (no tenant-based restriction)
+        ok, dia = await thread_pool_exec(DialogService.get_by_id, chat_id)
+        if not ok or str(getattr(dia, "status", "")) != StatusEnum.VALID.value:
+            logging.warning("list_sessions: chat not found or invalid chat_id=%s", chat_id)
+            return get_data_error_result(message="Chat not found!")
+        logging.info("list_sessions: request user=%s chat_id=%s", current_user.id, chat_id)
         page_number = int(request.args.get("page", 1))
         items_per_page = int(request.args.get("page_size", 30))
         orderby = request.args.get("orderby", "create_time")
@@ -783,16 +783,18 @@ async def list_sessions(chat_id):
 @manager.route("/chats/<chat_id>/sessions/<session_id>", methods=["GET"])  # noqa: F821
 @login_required
 async def get_session(chat_id, session_id):
-    if not await _ensure_owned_chat(chat_id):
-        return get_json_result(data=False, message="No authorization.", code=RetCode.AUTHENTICATION_ERROR)
+    # All authenticated users can view any session (no tenant-based restriction)
+    ok, dia = await thread_pool_exec(DialogService.get_by_id, chat_id)
+    if not ok or str(getattr(dia, "status", "")) != StatusEnum.VALID.value:
+        logging.warning("get_session: chat not found or invalid chat_id=%s", chat_id)
+        return get_data_error_result(message="Chat not found!")
     try:
         ok, conv = await thread_pool_exec(ConversationService.get_by_id, session_id)
         if not ok:
             return get_data_error_result(message="Session not found!")
         if conv.dialog_id != chat_id:
             return get_data_error_result(message="Session does not belong to this chat!")
-        dialog = await _ensure_owned_chat(chat_id)
-        avatar = dialog[0].icon if dialog else ""
+        avatar = dia.icon if dia else ""
         for ref in conv.reference:
             if isinstance(ref, list):
                 continue
@@ -1146,15 +1148,10 @@ async def session_completion(chat_id_in_arg=""):
             return get_data_error_result(message="`chat_id` is required when `session_id` is provided.")
 
         if chat_id:
-            if not await _ensure_owned_chat(chat_id):
-                return get_json_result(
-                    data=False,
-                    message="No authorization.",
-                    code=RetCode.AUTHENTICATION_ERROR,
-                )
             e, dia = await thread_pool_exec(DialogService.get_by_id, chat_id)
-            if not e:
+            if not e or str(getattr(dia, "status", "")) != StatusEnum.VALID.value:
                 return get_data_error_result(message="Chat not found!")
+            logging.info("session_completion: user=%s chat_id=%s", current_user.id, chat_id)
             if session_id:
                 e, conv = await thread_pool_exec(ConversationService.get_by_id, session_id)
                 if not e:
