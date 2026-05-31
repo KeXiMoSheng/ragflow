@@ -172,15 +172,6 @@ func (h *ChatSessionHandler) ListChatSessions(c *gin.Context) {
 	// Call service to list chat sessions
 	result, err := h.chatSessionService.ListChatSessions(userID, chatID)
 	if err != nil {
-		// Check if it's an authorization error
-		if err.Error() == "Only owner of dialog authorized for this operation" {
-			c.JSON(http.StatusForbidden, gin.H{
-				"code":    403,
-				"data":    false,
-				"message": err.Error(),
-			})
-			return
-		}
 		c.JSON(http.StatusInternalServerError, gin.H{
 			"code":    500,
 			"message": err.Error(),

@@ -20,6 +20,10 @@ import (
 	"fmt"
 	"ragflow/internal/entity"
 	"strings"
+
+	"go.uber.org/zap"
+
+	"ragflow/internal/common"
 )
 
 // ChatDAO chat data access object
@@ -237,4 +241,64 @@ func (dao *ChatDAO) QueryByTenantIDAndID(tenantID string, chatID string, status 
 	var chats []*entity.Chat
 	err := DB.Where("tenant_id = ? AND id = ? AND status = ?", tenantID, chatID, status).Find(&chats).Error
 	return chats, err
+}
+
+// ListAllChats lists all valid chats without tenant filtering, with pagination and keyword search
+func (dao *ChatDAO) ListAllChats(page, pageSize int, orderby string, desc bool, keywords string, status string) ([]*entity.Chat, int64, error) {
+	var chats []*entity.Chat
+	var total int64
+
+	common.Info("ListAllChats DAO: query",
+		zap.Int("page", page),
+		zap.Int("page_size", pageSize),
+		zap.String("orderby", orderby),
+		zap.Bool("desc", desc),
+		zap.String("keywords", keywords),
+		zap.String("status", status))
+
+	query := DB.Model(&entity.Chat{}).
+		Select(`
+			dialog.*,
+			user.nickname,
+			user.avatar as tenant_avatar
+		`).
+		Joins("LEFT JOIN user ON dialog.tenant_id = user.id")
+
+	if status != "" {
+		query = query.Where("dialog.status = ?", status)
+	}
+
+	if keywords != "" {
+		query = query.Where("LOWER(dialog.name) LIKE ?", "%"+strings.ToLower(keywords)+"%")
+	}
+
+	// Apply ordering
+	orderDirection := "ASC"
+	if desc {
+		orderDirection = "DESC"
+	}
+	query = query.Order(orderby + " " + orderDirection)
+
+	// Count total
+	if err := query.Count(&total).Error; err != nil {
+		return nil, 0, err
+	}
+
+	// Apply pagination
+	if page > 0 && pageSize > 0 {
+		offset := (page - 1) * pageSize
+		if err := query.Offset(offset).Limit(pageSize).Find(&chats).Error; err != nil {
+			return nil, 0, err
+		}
+	} else {
+		if err := query.Find(&chats).Error; err != nil {
+			return nil, 0, err
+		}
+	}
+
+	common.Info("ListAllChats DAO: result",
+		zap.Int64("total", total),
+		zap.Int("returned", len(chats)))
+
+	return chats, total, nil
 }

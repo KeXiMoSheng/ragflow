@@ -22,6 +22,7 @@ import (
 	"strconv"
 
 	"github.com/gin-gonic/gin"
+	"go.uber.org/zap"
 
 	"ragflow/internal/service"
 )
@@ -81,7 +82,12 @@ func (h *ChatHandler) ListChats(c *gin.Context) {
 	}
 
 	// List chats - default to valid status "1" (same as Python StatusEnum.VALID.value)
-	result, err := h.chatService.ListChats(userID, keywords, "1", page, pageSize, orderby, desc)
+	common.Info("ListChats handler: request",
+		zap.String("user_id", userID),
+		zap.String("keywords", keywords),
+		zap.Int("page", page),
+		zap.Int("page_size", pageSize))
+	result, err := h.chatService.ListChats(userID, "1", keywords, page, pageSize, orderby, desc)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
 			"code":    500,
@@ -315,22 +321,26 @@ func (h *ChatHandler) GetChat(c *gin.Context) {
 	}
 
 	// Get chat detail with permission check
+	common.Info("GetChat handler: request",
+		zap.String("user_id", userID),
+		zap.String("chat_id", chatID))
 	chat, err := h.chatService.GetChat(userID, chatID)
 	if err != nil {
 		errMsg := err.Error()
-		// Check if it's an authorization error
-		if errMsg == "no authorization" {
+		common.Info("GetChat handler: error",
+			zap.String("chat_id", chatID),
+			zap.String("error", errMsg))
+		// Not found error
+		if errMsg == "chat not found" {
 			c.JSON(http.StatusOK, gin.H{
-				"code":    common.CodeAuthenticationError,
-				"data":    false,
-				"message": "No authorization.",
+				"code":    common.CodeDataError,
+				"data":    nil,
+				"message": err.Error(),
 			})
 			return
 		}
-		// Not found error
-		c.JSON(http.StatusOK, gin.H{
-			"code":    common.CodeDataError,
-			"data":    nil,
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"code":    500,
 			"message": err.Error(),
 		})
 		return
@@ -368,6 +378,9 @@ func (h *ChatHandler) GetChat(c *gin.Context) {
 	}
 
 	// Return success response
+	common.Info("GetChat handler: success",
+		zap.String("chat_id", chatID),
+		zap.String("chat_name", *chat.Name))
 	c.JSON(http.StatusOK, gin.H{
 		"code":    common.CodeSuccess,
 		"data":    result,

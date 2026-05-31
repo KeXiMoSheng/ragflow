@@ -206,40 +206,13 @@ type ListChatSessionsResponse struct {
 	Sessions []*entity.ChatSession
 }
 
-// ListChatSessions lists chat sessions for a dialog
+// ListChatSessions lists chat sessions for a dialog (all authenticated users can view)
 func (s *ChatSessionService) ListChatSessions(userID string, chatID string) (*ListChatSessionsResponse, error) {
-	// Get user's tenants
-	tenantIDs, err := s.userTenantDAO.GetTenantIDsByUserID(userID)
+	// Verify the dialog exists (without tenant-based ownership check)
+	// All authenticated users can view sessions from any chat
+	_, err := s.chatSessionDAO.GetDialogByID(chatID)
 	if err != nil {
-		return nil, err
-	}
-
-	// Check if user is the owner of the dialog
-	isOwner := false
-	for _, tenantID := range tenantIDs {
-		var exists bool
-		exists, err = s.chatSessionDAO.CheckDialogExists(tenantID, chatID)
-		if err != nil {
-			return nil, err
-		}
-		if exists {
-			isOwner = true
-			break
-		}
-	}
-
-	// Also check with userID as tenant
-	if !isOwner {
-		var exists bool
-		exists, err = s.chatSessionDAO.CheckDialogExists(userID, chatID)
-		if err != nil {
-			return nil, err
-		}
-		isOwner = exists
-	}
-
-	if !isOwner {
-		return nil, errors.New("only owner of dialog authorized for this operation")
+		return nil, errors.New("dialog not found")
 	}
 
 	// List chat sessions
