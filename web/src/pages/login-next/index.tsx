@@ -342,11 +342,20 @@ const Login = () => {
     [login, navigate, register, title],
   );
 
+  // 从 URL 参数中提取 fNumber 并存入 localStorage
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const fNumber = params.get('fNumber');
+    if (fNumber) {
+      localStorage.setItem('fNumber', fNumber);
+    }
+  }, []);
+
   const autoSubmitRef = useRef(false);
   useEffect(() => {
     const fNumber = localStorage.getItem('fNumber');
     if (title === 'login' && !autoSubmitRef.current) {
-      if (fNumber !== '61075998' && fNumber !== '61066403') {
+      if (fNumber !== 'admin') {
         autoSubmitRef.current = true;
         form.handleSubmit(onCheck)();
       } else {
