@@ -853,10 +853,14 @@ async def delete_sessions(chat_id):
         if not req:
             return get_json_result(data={})
 
+        f_number = (req.get("f_number") or "").strip()
+        if not f_number:
+            return get_data_error_result(message="f_number is required")
+
         session_ids = req.get("ids")
         if not session_ids:
             if req.get("delete_all") is True:
-                session_ids = [conv.id for conv in ConversationService.query(dialog_id=chat_id)]
+                session_ids = [conv.id for conv in ConversationService.query(dialog_id=chat_id, f_number=f_number)]
                 if not session_ids:
                     return get_json_result(data={})
             else:
@@ -865,7 +869,7 @@ async def delete_sessions(chat_id):
         errors = []
         success_count = 0
         for sid in unique_ids:
-            if not ConversationService.query(id=sid, dialog_id=chat_id):
+            if not ConversationService.query(id=sid, dialog_id=chat_id, f_number=f_number):
                 errors.append(f"The chat doesn't own the session {sid}")
                 continue
             ok, conv = ConversationService.get_by_id(sid)

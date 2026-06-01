@@ -400,8 +400,12 @@ export const useRemoveSessions = () => {
   } = useMutation({
     mutationKey: [ChatApiAction.RemoveSession],
     mutationFn: async (sessionIds: string[]) => {
+      const fNumber = localStorage.getItem('fNumber') || '';
       const { data } = await chatService.removeSessions(
-        { url: api.removeSessions(chatId!), data: { ids: sessionIds } },
+        {
+          url: api.removeSessions(chatId!),
+          data: { ids: sessionIds, f_number: fNumber },
+        },
         true,
       );
       if (data.code === 0) {
