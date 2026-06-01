@@ -47,31 +47,33 @@ const UserSettingTeam = () => {
       <Spotlight />
 
       <div className="h-full overflow-x-hidden overflow-y-auto">
-        <Card className="bg-transparent border-none">
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 p-4">
-            {/* <User className="mr-2 h-5 w-5 text-[#1677ff]" /> */}
-            <CardTitle className="text-base">
-              {t('setting.teamMembers')}
-            </CardTitle>
+        {userInfo?.is_superuser && (
+          <Card className="bg-transparent border-none">
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 p-4">
+              {/* <User className="mr-2 h-5 w-5 text-[#1677ff]" /> */}
+              <CardTitle className="text-base">
+                {t('setting.teamMembers')}
+              </CardTitle>
 
-            <section className="flex gap-4 items-center">
-              <SearchInput
-                className="bg-bg-input border-border-default w-32"
-                placeholder={t('common.search')}
-                value={searchUser}
-                onChange={(e) => setSearchUser(e.target.value)}
-              />
-              <Button onClick={showAddingTenantModal}>
-                <UserPlus className=" h-4 w-4" />
-                {t('setting.invite')}
-              </Button>
-            </section>
-          </CardHeader>
+              <section className="flex gap-4 items-center">
+                <SearchInput
+                  className="bg-bg-input border-border-default w-32"
+                  placeholder={t('common.search')}
+                  value={searchUser}
+                  onChange={(e) => setSearchUser(e.target.value)}
+                />
+                <Button onClick={showAddingTenantModal}>
+                  <UserPlus className=" h-4 w-4" />
+                  {t('setting.invite')}
+                </Button>
+              </section>
+            </CardHeader>
 
-          <CardContent className="p-4 pt-0">
-            <UserTable searchUser={searchUser}></UserTable>
-          </CardContent>
-        </Card>
+            <CardContent className="p-4 pt-0">
+              <UserTable searchUser={searchUser}></UserTable>
+            </CardContent>
+          </Card>
+        )}
 
         <Card className="bg-transparent border-none mt-8">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 p-4">

@@ -13,17 +13,16 @@ import {
   useListTenant,
 } from '@/hooks/use-user-setting-request';
 import { formatDate } from '@/utils/date';
-import { ArrowDown, ArrowUp, ArrowUpDown, LogOut } from 'lucide-react';
+import { ArrowDown, ArrowUp, ArrowUpDown } from 'lucide-react';
 import { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { TenantRole } from '../constants';
-import { useHandleAgreeTenant, useHandleQuitUser } from './hooks';
+import { useHandleAgreeTenant } from './hooks';
 const TenantTable = ({ searchTerm }: { searchTerm: string }) => {
   const { t } = useTranslation();
   const { data, loading } = useListTenant();
   const { handleAgree } = useHandleAgreeTenant();
   const { data: user } = useFetchUserInfo();
-  const { handleQuitTenantUser } = useHandleQuitUser();
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc' | null>(null);
   const sortedData = useMemo(() => {
     if (!data || data.length === 0) return data;
@@ -137,17 +136,7 @@ const TenantTable = ({ searchTerm }: { searchTerm: string }) => {
                       </Button>
                     </div>
                   ) : tenant.role === TenantRole.Normal &&
-                    user.id !== tenant.tenant_id ? (
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      className="h-8 w-8 p-0"
-                      onClick={handleQuitTenantUser(user.id, tenant.tenant_id)}
-                    >
-                      {/* {t('setting.quit')} */}
-                      <LogOut />
-                    </Button>
-                  ) : null}
+                    user.id !== tenant.tenant_id ? null : null}
                 </TableCell>
               </TableRow>
             ))
