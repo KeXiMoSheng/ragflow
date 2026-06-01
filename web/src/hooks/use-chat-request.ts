@@ -329,9 +329,17 @@ export const useCreateSession = () => {
     mutateAsync,
   } = useMutation({
     mutationKey: [ChatApiAction.CreateSession],
-    mutationFn: async ({ chatId, name }: { chatId: string; name: string }) => {
+    mutationFn: async ({
+      chatId,
+      name,
+      f_number,
+    }: {
+      chatId: string;
+      name: string;
+      f_number?: string;
+    }) => {
       const { data } = await chatService.createSession(
-        { url: api.createSession(chatId), data: { name } },
+        { url: api.createSession(chatId), data: { name, f_number } },
         true,
       );
       if (data.code === 0) {

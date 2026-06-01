@@ -128,7 +128,8 @@ async def async_completion(tenant_id, chat_id, question, name="New session", ses
             "dialog_id": chat_id,
             "name": name,
             "message": [{"role": "assistant", "content": dia[0].prompt_config.get("prologue"), "created_at": time.time()}],
-            "user_id": kwargs.get("user_id", "")
+            "user_id": kwargs.get("user_id", ""),
+            "f_number": kwargs.get("f_number", "")
         }
         ConversationService.save(**conv)
         if stream:
@@ -230,6 +231,7 @@ async def async_iframe_completion(dialog_id, question, session_id=None, stream=T
             "id": session_id,
             "dialog_id": dialog_id,
             "user_id": kwargs.get("user_id", ""),
+            "f_number": kwargs.get("f_number", ""),
             "message": [{"role": "assistant", "content": dia.prompt_config["prologue"], "created_at": time.time()}]
         }
         API4ConversationService.save(**conv)

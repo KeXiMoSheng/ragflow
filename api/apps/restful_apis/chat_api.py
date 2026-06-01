@@ -153,7 +153,7 @@ def _build_default_completion_dialog():
     )
 
 
-async def _create_session_for_completion(chat_id, dialog, user_id):
+async def _create_session_for_completion(chat_id, dialog, user_id, f_number=None):
     conv = {
         "id": get_uuid(),
         "dialog_id": chat_id,
@@ -162,6 +162,8 @@ async def _create_session_for_completion(chat_id, dialog, user_id):
         "user_id": user_id,
         "reference": [],
     }
+    if f_number:
+        conv["f_number"] = f_number
     await thread_pool_exec(ConversationService.save, **conv)
     ok, conv_obj = await thread_pool_exec(ConversationService.get_by_id, conv["id"])
     if not ok:
@@ -742,6 +744,7 @@ async def create_session(chat_id):
             "name": name,
             "message": [{"role": "assistant", "content": dia.prompt_config.get("prologue", "")}],
             "user_id": current_user.id,
+            "f_number": req.get("f_number", ""),
             "reference": [],
         }
         ConversationService.save(**conv)
@@ -1164,7 +1167,8 @@ async def session_completion(chat_id_in_arg=""):
                 if conv.dialog_id != chat_id:
                     return get_data_error_result(message="Session does not belong to this chat!")
             else:
-                conv = await _create_session_for_completion(chat_id, dia, current_user.id)
+                f_number = req.pop("f_number", "") or ""
+                conv = await _create_session_for_completion(chat_id, dia, current_user.id, f_number)
                 session_id = conv.id
 
             if pass_all_history_messages:

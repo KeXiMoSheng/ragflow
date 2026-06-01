@@ -55,6 +55,7 @@ type SetChatSessionRequest struct {
 	DialogID  string `json:"dialog_id,omitempty"`
 	Name      string `json:"name,omitempty"`
 	IsNew     bool   `json:"is_new"`
+	FNumber   string `json:"f_number,omitempty"`
 }
 
 // SetChatSessionResponse set chat session response
@@ -126,6 +127,10 @@ func (s *ChatSessionService) SetChatSession(userID string, req *SetChatSessionRe
 	referenceJSON, _ := json.Marshal([]interface{}{})
 
 	// Create chat session
+	var fNumber *string
+	if req.FNumber != "" {
+		fNumber = &req.FNumber
+	}
 	session := &entity.ChatSession{
 		ID:        newID,
 		DialogID:  req.DialogID,
@@ -133,6 +138,7 @@ func (s *ChatSessionService) SetChatSession(userID string, req *SetChatSessionRe
 		Message:   messagesJSON,
 		UserID:    &userID,
 		Reference: referenceJSON,
+		FNumber:   fNumber,
 	}
 
 	if err := s.chatSessionDAO.Create(session); err != nil {

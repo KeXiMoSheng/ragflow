@@ -57,6 +57,7 @@ type ChatSession struct {
 	Message   json.RawMessage `gorm:"column:message;type:longtext" json:"message,omitempty"`
 	Reference json.RawMessage `gorm:"column:reference;type:longtext" json:"reference"`
 	UserID    *string         `gorm:"column:user_id;size:255;index" json:"user_id,omitempty"`
+	FNumber   *string         `gorm:"column:f_number;size:255;index" json:"f_number,omitempty"`
 	BaseModel
 }
 

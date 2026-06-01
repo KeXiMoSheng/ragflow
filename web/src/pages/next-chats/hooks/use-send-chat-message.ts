@@ -97,6 +97,7 @@ export const useSendMessage = (controller: AbortController) => {
       messages?: IMessage[];
     } & NextMessageInputOnPressEnterParameter) => {
       const sessionId = currentConversationId ?? conversationId;
+      const fNumber = localStorage.getItem('fNumber') || '';
       const res = await send(
         api.completionUrl,
         {
@@ -111,6 +112,7 @@ export const useSendMessage = (controller: AbortController) => {
           pass_all_history_messages: true,
           reasoning: enableThinking,
           internet: enableInternet,
+          f_number: fNumber,
         },
         controller,
       );

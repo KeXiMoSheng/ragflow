@@ -345,7 +345,7 @@ const Login = () => {
   // 从 URL 参数中提取 fNumber 并存入 localStorage
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
-    const fNumber = params.get('fNumber');
+    const fNumber = params.get('f_number');
     if (fNumber) {
       localStorage.setItem('fNumber', fNumber);
     }

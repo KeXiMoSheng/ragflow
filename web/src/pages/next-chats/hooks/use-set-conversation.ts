@@ -8,7 +8,12 @@ export const useSetConversation = () => {
 
   const setConversation = useCallback(
     async (name: string) => {
-      const data = await createSession({ chatId: chatId!, name });
+      const fNumber = localStorage.getItem('fNumber') || '';
+      const data = await createSession({
+        chatId: chatId!,
+        name,
+        f_number: fNumber,
+      });
       return data;
     },
     [createSession, chatId],

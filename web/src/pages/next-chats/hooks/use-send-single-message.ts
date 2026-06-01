@@ -66,6 +66,7 @@ export function useSendSingleMessage({
       messages?: IMessage[];
     } & NextMessageInputOnPressEnterParameter) => {
       const sessionId = currentConversationId ?? conversationId;
+      const fNumber = localStorage.getItem('fNumber') || '';
       const res = await send(
         api.completionUrl,
         {
@@ -81,6 +82,7 @@ export function useSendSingleMessage({
           internet: enableInternet,
           ...params,
           pass_all_history_messages: true,
+          f_number: fNumber,
         },
         controller,
       );
