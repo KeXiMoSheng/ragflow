@@ -18,7 +18,7 @@ import {
   LucideUser,
   LucideUsers,
 } from 'lucide-react';
-import { useEffect } from 'react';
+import { useEffect, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useHandleMenuClick } from './hooks';
 
@@ -27,32 +27,38 @@ const menuItems = (t: TFunction) => [
     icon: <LucideServer className="size-[1em]" />,
     label: t('setting.dataSources'),
     key: Routes.DataSource,
+    adminOnly: true,
   },
   {
     icon: <LucideBox className="size-[1em]" />,
     label: t('setting.model'),
     key: Routes.Model,
     'data-testid': 'settings-nav-model-providers',
+    adminOnly: true,
   },
   {
     icon: <IconFontFill name="mcp" className="size-[1em]" />,
     label: 'MCP',
     key: Routes.Mcp,
+    adminOnly: true,
   },
   {
     icon: <LucideUsers className="size-[1em]" />,
     label: t('setting.team'),
     key: Routes.Team,
+    adminOnly: false,
   },
   {
     icon: <LucideUser className="size-[1em]" />,
     label: t('setting.profile'),
     key: Routes.Profile,
+    adminOnly: true,
   },
   {
     icon: <LucideUnplug className="size-[1em]" />,
     label: t('setting.api'),
     key: Routes.Api,
+    adminOnly: true,
   },
   // {
   //   icon: MessageSquareQuote,
@@ -76,6 +82,12 @@ export function SideBar() {
   }, [fetchSystemVersion]);
   const { logout } = useLogout();
 
+  const filteredMenuItems = useMemo(
+    () =>
+      menuItems(t).filter((item) => !item.adminOnly || userInfo?.is_superuser),
+    [t, userInfo?.is_superuser],
+  );
+
   return (
     <aside className="w-[303px] bg-bg-base flex flex-col">
       <header>
@@ -92,7 +104,7 @@ export function SideBar() {
 
       <nav className="flex-1 overflow-auto mt-4 py-1">
         <ul className="px-6 flex flex-col gap-5">
-          {menuItems(t).map((item) => {
+          {filteredMenuItems.map((item) => {
             const { key, icon, label, ...rest } = item;
 
             return (

@@ -208,36 +208,36 @@ function LoginFormContent({
           </div>
         )}
 
-        {!disablePasswordLogin && title === 'login' && registerEnabled && (
-          <div className="mt-10 text-right">
-            <p className="text-text-disabled text-sm">
-              {t('signInTip')}
-              <Button
-                data-testid="auth-toggle-register"
-                variant={'transparent'}
-                onClick={changeTitle}
-                className="text-accent-primary/90 hover:text-accent-primary hover:bg-transparent font-medium border-none transition-colors duration-200"
-              >
-                {t('signUp')}
-              </Button>
-            </p>
-          </div>
-        )}
-        {!disablePasswordLogin && title === 'register' && (
-          <div className="mt-10 text-right">
-            <p className="text-text-disabled text-sm">
-              {t('signUpTip')}
-              <Button
-                data-testid="auth-toggle-login"
-                variant={'transparent'}
-                onClick={changeTitle}
-                className="text-accent-primary/90 hover:text-accent-primary hover:bg-transparent font-medium border-none transition-colors duration-200"
-              >
-                {t('login')}
-              </Button>
-            </p>
-          </div>
-        )}
+        {/*{!disablePasswordLogin && title === 'login' && registerEnabled && (*/}
+        {/*  <div className="mt-10 text-right">*/}
+        {/*    <p className="text-text-disabled text-sm">*/}
+        {/*      {t('signInTip')}*/}
+        {/*      <Button*/}
+        {/*        data-testid="auth-toggle-register"*/}
+        {/*        variant={'transparent'}*/}
+        {/*        onClick={changeTitle}*/}
+        {/*        className="text-accent-primary/90 hover:text-accent-primary hover:bg-transparent font-medium border-none transition-colors duration-200"*/}
+        {/*      >*/}
+        {/*        {t('signUp')}*/}
+        {/*      </Button>*/}
+        {/*    </p>*/}
+        {/*  </div>*/}
+        {/*)}*/}
+        {/*{!disablePasswordLogin && title === 'register' && (*/}
+        {/*  <div className="mt-10 text-right">*/}
+        {/*    <p className="text-text-disabled text-sm">*/}
+        {/*      {t('signUpTip')}*/}
+        {/*      <Button*/}
+        {/*        data-testid="auth-toggle-login"*/}
+        {/*        variant={'transparent'}*/}
+        {/*        onClick={changeTitle}*/}
+        {/*        className="text-accent-primary/90 hover:text-accent-primary hover:bg-transparent font-medium border-none transition-colors duration-200"*/}
+        {/*      >*/}
+        {/*        {t('login')}*/}
+        {/*      </Button>*/}
+        {/*    </p>*/}
+        {/*  </div>*/}
+        {/*)}*/}
       </div>
     </div>
   );
@@ -307,7 +307,7 @@ const Login = () => {
   const form = useForm<FormValues>({
     defaultValues: {
       nickname: '',
-      email: '2837665615@qq.com',
+      email: '123@qq.com',
       password: '12345678',
       remember: false,
     },
