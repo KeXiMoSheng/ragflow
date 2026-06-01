@@ -5,6 +5,7 @@ import {
   useFetchSessionManually,
   useGetChatSearchParams,
 } from '@/hooks/use-chat-request';
+import { useFetchUserInfo } from '@/hooks/use-user-setting-request';
 import { IClientConversation } from '@/interfaces/database/chat';
 import { RootLayoutContainer } from '@/layouts/root-layout';
 import { cn } from '@/lib/utils';
@@ -23,6 +24,9 @@ import { useSwitchDebugMode } from './use-switch-debug-mode';
 
 export default function Chat() {
   const { t } = useTranslation();
+  const {
+    data: { is_superuser: isSuperuser },
+  } = useFetchUserInfo();
   const [currentConversation, setCurrentConversation] =
     useState<IClientConversation>({} as IClientConversation);
 
@@ -122,14 +126,16 @@ export default function Chat() {
                   <CardTitle className="flex justify-between items-center text-base gap-2">
                     <div className="truncate">{currentConversationName}</div>
 
-                    <Button
-                      variant="ghost"
-                      onClick={switchDebugMode}
-                      data-testid="chat-detail-multimodel-toggle"
-                    >
-                      <LucideArrowUpRight />
-                      {t('chat.multipleModels')}
-                    </Button>
+                    {isSuperuser && (
+                      <Button
+                        variant="ghost"
+                        onClick={switchDebugMode}
+                        data-testid="chat-detail-multimodel-toggle"
+                      >
+                        <LucideArrowUpRight />
+                        {t('chat.multipleModels')}
+                      </Button>
+                    )}
                   </CardTitle>
                 </CardHeader>
                 <CardContent className="flex-1 p-0 min-h-0">
@@ -141,7 +147,11 @@ export default function Chat() {
                 </CardContent>
               </Card>
 
-              <ChatSettings hasSingleChatBox={hasSingleChatBox}></ChatSettings>
+              {isSuperuser && (
+                <ChatSettings
+                  hasSingleChatBox={hasSingleChatBox}
+                ></ChatSettings>
+              )}
             </CardContent>
           </Card>
         </article>
