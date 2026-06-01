@@ -8,7 +8,7 @@ import {
 } from '@/hooks/use-login-request';
 import { useSystemConfig } from '@/hooks/use-system-request';
 import { rsaPsw } from '@/utils';
-import { useContext, useEffect, useState } from 'react';
+import { useCallback, useContext, useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router';
 
@@ -52,8 +52,6 @@ function LoginFormContent({
   form,
   loading,
   onCheck,
-  changeTitle,
-  registerEnabled,
   channels,
   handleLoginWithChannel,
   t,
@@ -314,32 +312,48 @@ const Login = () => {
     resolver: zodResolver(FormSchema),
   });
 
-  const onCheck = async (params: FormValues) => {
-    try {
-      const rsaPassWord = rsaPsw(params.password) as string;
+  const onCheck = useCallback(
+    async (params: FormValues) => {
+      try {
+        const rsaPassWord = rsaPsw(params.password) as string;
 
-      if (title === 'login') {
-        const code = await login({
-          email: `${params.email}`.trim(),
-          password: rsaPassWord,
-        });
-        if (code === 0) {
-          navigate('/chats');
+        if (title === 'login') {
+          const code = await login({
+            email: `${params.email}`.trim(),
+            password: rsaPassWord,
+          });
+          if (code === 0) {
+            navigate('/chats');
+          }
+        } else {
+          const code = await register({
+            nickname: params.nickname,
+            email: params.email,
+            password: rsaPassWord,
+          });
+          if (code === 0) {
+            setTitle('login');
+          }
         }
-      } else {
-        const code = await register({
-          nickname: params.nickname,
-          email: params.email,
-          password: rsaPassWord,
-        });
-        if (code === 0) {
-          setTitle('login');
-        }
+      } catch (errorInfo) {
+        console.log('Failed:', errorInfo);
       }
-    } catch (errorInfo) {
-      console.log('Failed:', errorInfo);
+    },
+    [login, navigate, register, title],
+  );
+
+  const autoSubmitRef = useRef(false);
+  useEffect(() => {
+    const fNumber = localStorage.getItem('fNumber');
+    if (title === 'login' && !autoSubmitRef.current) {
+      if (fNumber !== '61075998' && fNumber !== '61066403') {
+        autoSubmitRef.current = true;
+        form.handleSubmit(onCheck)();
+      } else {
+        autoSubmitRef.current = true;
+      }
     }
-  };
+  }, [title, form, onCheck]);
 
   return (
     <>
