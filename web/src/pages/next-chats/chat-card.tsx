@@ -7,9 +7,10 @@ import { useRenameChat } from './hooks/use-rename-chat';
 
 export type IProps = {
   data: IDialog;
+  isSuperuser: boolean;
 } & Pick<ReturnType<typeof useRenameChat>, 'showChatRenameModal'>;
 
-export function ChatCard({ data, showChatRenameModal }: IProps) {
+export function ChatCard({ data, isSuperuser, showChatRenameModal }: IProps) {
   const { navigateToChat } = useNavigatePage();
 
   return (
@@ -21,9 +22,11 @@ export function ChatCard({ data, showChatRenameModal }: IProps) {
         update_time: data.update_time,
       }}
       moreDropdown={
-        <ChatDropdown chat={data} showChatRenameModal={showChatRenameModal}>
-          <MoreButton></MoreButton>
-        </ChatDropdown>
+        isSuperuser ? (
+          <ChatDropdown chat={data} showChatRenameModal={showChatRenameModal}>
+            <MoreButton></MoreButton>
+          </ChatDropdown>
+        ) : undefined
       }
       onClick={navigateToChat(data?.id)}
     />

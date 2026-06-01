@@ -65,7 +65,10 @@ export default function ChatList() {
               searchString={searchString}
             >
               {isSuperuser && (
-                <Button data-testid="create-chat" onClick={handleShowCreateModal}>
+                <Button
+                  data-testid="create-chat"
+                  onClick={handleShowCreateModal}
+                >
                   <Plus className="size-[1em]" />
                   {t('chat.createChat')}
                 </Button>
@@ -80,6 +83,7 @@ export default function ChatList() {
                   <ChatCard
                     key={x.id}
                     data={x}
+                    isSuperuser={isSuperuser}
                     showChatRenameModal={showChatRenameModal}
                   />
                 ))}
