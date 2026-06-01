@@ -763,6 +763,11 @@ async def list_sessions(chat_id):
             logging.warning("list_sessions: chat not found or invalid chat_id=%s", chat_id)
             return get_data_error_result(message="Chat not found!")
         logging.info("list_sessions: request user=%s chat_id=%s", current_user.id, chat_id)
+        f_number = request.args.get("f_number")
+        if not f_number:
+            logging.warning("list_sessions: f_number is empty, return empty data")
+            return get_json_result(data=[])
+        logging.info("list_sessions: filtering by f_number=%s", f_number)
         page_number = int(request.args.get("page", 1))
         items_per_page = int(request.args.get("page_size", 30))
         orderby = request.args.get("orderby", "create_time")
@@ -771,7 +776,7 @@ async def list_sessions(chat_id):
         name = request.args.get("name")
         user_id = request.args.get("user_id")
         convs = ConversationService.get_list(
-            chat_id, page_number, items_per_page, orderby, desc, session_id, name, user_id
+            chat_id, page_number, items_per_page, orderby, desc, session_id, name, user_id, f_number=f_number
         )
         if items_per_page == 0:
             convs = []

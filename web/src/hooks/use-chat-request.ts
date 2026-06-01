@@ -284,8 +284,9 @@ export const useFetchSessionList = () => {
         : data;
     },
     queryFn: async () => {
+      const fNumber = localStorage.getItem('fNumber') || '';
       const { data } = await chatService.listSessions(
-        { url: api.listSessions(id!) },
+        { url: api.listSessions(id!), params: { f_number: fNumber } },
         true,
       );
       return data?.data;

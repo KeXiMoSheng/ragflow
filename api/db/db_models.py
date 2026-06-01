@@ -1016,6 +1016,7 @@ class Conversation(DataBaseModel):
     message = JSONField(null=True)
     reference = JSONField(null=True, default=[])
     user_id = CharField(max_length=255, null=True, help_text="user_id", index=True)
+    f_number = CharField(max_length=255, null=True, help_text="壹招报工号", index=True)
 
     class Meta:
         db_table = "conversation"
@@ -1668,6 +1669,7 @@ def migrate_db():
     alter_db_add_column(migrator, "api_4_conversation", "version_title", CharField(max_length=255, null=True, help_text="canvas version title when session created", index=False))
     alter_db_column_type(migrator, "document", "size", BigIntegerField(default=0, index=True))
     alter_db_column_type(migrator, "file", "size", BigIntegerField(default=0, index=True))
+    alter_db_add_column(migrator, "conversation", "f_number", CharField(max_length=255, null=True, help_text="壹招报工号", index=True))
     logging.disable(logging.NOTSET)
     # this is after re-enabling logging to allow logging changed user emails
     migrate_add_unique_email(migrator)

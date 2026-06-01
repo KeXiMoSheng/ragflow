@@ -35,7 +35,7 @@ class ConversationService(CommonService):
 
     @classmethod
     @DB.connection_context()
-    def get_list(cls, dialog_id, page_number, items_per_page, orderby, desc, id, name, user_id=None):
+    def get_list(cls, dialog_id, page_number, items_per_page, orderby, desc, id, name, user_id=None, f_number=None):
         sessions = cls.model.select().where(cls.model.dialog_id == dialog_id)
         if id:
             sessions = sessions.where(cls.model.id == id)
@@ -43,6 +43,8 @@ class ConversationService(CommonService):
             sessions = sessions.where(cls.model.name == name)
         if user_id:
             sessions = sessions.where(cls.model.user_id == user_id)
+        if f_number:
+            sessions = sessions.where(cls.model.f_number == f_number)
         if desc:
             sessions = sessions.order_by(cls.model.getter_by(orderby).desc())
         else:
